@@ -27,6 +27,11 @@ namespace api.Controllers
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+            
             var todos = await _todoRepo.GetAllAsync();
 
             var todoDto = todos.Select(t => t.ToTodoDto());
@@ -34,9 +39,14 @@ namespace api.Controllers
             return Ok(todos);
         }
 
-        [HttpGet("{id}")]
+        [HttpGet("{id:guid}")]
         public async Task<IActionResult> GetById([FromRoute] Guid id)
         {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
             var todo = await _todoRepo.GetByIdAsync(id);
 
             if (todo == null)
@@ -50,6 +60,11 @@ namespace api.Controllers
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] CreateTodoRequestDto todoDto)
         {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
             var todoModel = todoDto.ToTodoFromCreateDto();
             //UserId only for testing
             todoModel.UserId = Guid.Parse("7daeebe8-8eee-4dd4-a9e5-f6293c8fa768");
@@ -58,9 +73,14 @@ namespace api.Controllers
         }
 
         [HttpPut]
-        [Route("{id}")]
+        [Route("{id:guid}")]
         public async Task<IActionResult> Update([FromRoute] Guid id, [FromBody] UpdateTodoRequestDto updateDto)
         {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
             var todoModel = await _todoRepo.UpdateAsync(id, updateDto);
 
             if(todoModel == null)
@@ -72,9 +92,14 @@ namespace api.Controllers
         }
 
         [HttpDelete]
-        [Route("{id}")]
+        [Route("{id:guid}")]
         public async Task<IActionResult> Delete([FromRoute] Guid id)
         {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
             var todoModel = await _todoRepo.DeleteAsync(id);
 
             if(todoModel == null)
