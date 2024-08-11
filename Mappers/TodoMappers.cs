@@ -18,5 +18,16 @@ namespace api.Mappers
                 IsComplete = todoModel.IsComplete
             };
         }
+
+        public static Todo ToTodoFromCreateDto(this CreateTodoRequestDto todoDto)
+        {
+            return new Todo
+            {
+                Title = todoDto.Title,
+                IsComplete = todoDto.IsComplete,
+            };
+        }
     }
 }
+
+    
