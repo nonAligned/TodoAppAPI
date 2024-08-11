@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using api.Data;
 using api.Dtos.Todo;
+using api.Helpers;
 using api.Interfaces;
 using api.Models;
 using Microsoft.EntityFrameworkCore;
@@ -40,9 +41,21 @@ namespace api.Repository
             return todoModel;
         }
 
-        public async Task<List<Todo>> GetAllAsync()
+        public async Task<List<Todo>> GetAllAsync(QueryObject query)
         {
-            return await _context.Todos.ToListAsync();
+            var todos = _context.Todos.AsQueryable();
+
+            if(!string.IsNullOrWhiteSpace(query.Title))
+            {
+                todos = todos.Where(t => t.Title.Contains(query.Title));
+            }
+
+            if(query.IsComplete != null)
+            {
+                todos = todos.Where(t => t.IsComplete == query.IsComplete);
+            }
+
+            return await todos.ToListAsync();
         }
 
         public async Task<Todo?> GetByIdAsync(Guid id)
