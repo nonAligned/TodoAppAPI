@@ -55,6 +55,14 @@ namespace api.Repository
                 todos = todos.Where(t => t.IsComplete == query.IsComplete);
             }
 
+            if(!string.IsNullOrWhiteSpace(query.SortBy))
+            {
+                if(query.SortBy.Equals("DateCreated", StringComparison.OrdinalIgnoreCase))
+                {
+                    todos = query.IsDecsending ? todos.OrderByDescending(t => t.DateCreated) : todos.OrderBy(t => t.DateCreated);
+                }
+            }
+
             return await todos.ToListAsync();
         }
 

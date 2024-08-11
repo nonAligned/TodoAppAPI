@@ -11,6 +11,7 @@ namespace api.Models
         public Guid UserId { get; set; }
         public string Title { get; set; } = string.Empty;
         public bool IsComplete { get; set; }
+        public DateTime DateCreated { get; set; }
         public User? User { get; set; }
     }
 }

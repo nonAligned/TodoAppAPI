@@ -9,5 +9,7 @@ namespace api.Helpers
     {
         public string? Title { get; set; } = null;
         public bool? IsComplete { get; set; }
+        public string? SortBy { get; set; } = null;
+        public bool IsDecsending { get; set; } = false;
     }
 }

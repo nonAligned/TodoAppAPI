@@ -37,7 +37,7 @@ namespace api.Controllers
 
             var todoDto = todos.Select(t => t.ToTodoDto());
 
-            return Ok(todos);
+            return Ok(todoDto);
         }
 
         [HttpGet("{id:guid}")]
@@ -67,8 +67,11 @@ namespace api.Controllers
             }
 
             var todoModel = todoDto.ToTodoFromCreateDto();
+
             //UserId only for testing
             todoModel.UserId = Guid.Parse("7daeebe8-8eee-4dd4-a9e5-f6293c8fa768");
+            todoModel.DateCreated = DateTime.UtcNow;
+
             await _todoRepo.CreateAsync(todoModel);
             return CreatedAtAction(nameof(GetById), new { id = todoModel.TodoId }, todoModel.ToTodoDto());
         }
