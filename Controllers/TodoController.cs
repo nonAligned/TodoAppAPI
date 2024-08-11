@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using api.Data;
+using api.Mappers;
 using Microsoft.AspNetCore.Mvc;
 
 namespace api.Controllers
@@ -20,13 +21,13 @@ namespace api.Controllers
         [HttpGet]
         public IActionResult GetAll()
         {
-            var todos = _context.Todos.ToList();
+            var todos = _context.Todos.ToList().Select(t => t.ToTodoDto());
 
             return Ok(todos);
         }
 
         [HttpGet("{id}")]
-        public IActionResult GetById([FromRoute] int id)
+        public IActionResult GetById([FromRoute] Guid id)
         {
             var todo = _context.Todos.Find(id);
 
@@ -35,7 +36,7 @@ namespace api.Controllers
                 return NotFound();
             }
 
-            return Ok(todo);
+            return Ok(todo.ToTodoDto());
         }
     }
 }
