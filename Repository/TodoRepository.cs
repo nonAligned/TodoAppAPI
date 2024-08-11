@@ -63,7 +63,9 @@ namespace api.Repository
                 }
             }
 
-            return await todos.ToListAsync();
+            var skipNumber = (query.PageNumber - 1) * query.PageSize;
+
+            return await todos.Skip(skipNumber).Take(query.PageSize).ToListAsync();
         }
 
         public async Task<Todo?> GetByIdAsync(Guid id)
