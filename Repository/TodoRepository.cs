@@ -41,9 +41,10 @@ namespace api.Repository
             return todoModel;
         }
 
-        public async Task<List<Todo>> GetAllAsync(QueryObject query)
+        public async Task<List<Todo>> GetAllAsync(QueryObject query, string userId)
         {
-            var todos = _context.Todos.AsQueryable();
+            
+            var todos = _context.Todos.Where(t => t.UserId == userId).AsQueryable();
 
             if(!string.IsNullOrWhiteSpace(query.Title))
             {

@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
+using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using api.Data;
 using api.Dtos.Todo;
@@ -8,11 +10,13 @@ using api.Helpers;
 using api.Interfaces;
 using api.Mappers;
 using api.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace api.Controllers
 {
+    [Authorize]
     [Route("api/todo")]
     [ApiController]
     public class TodoController : ControllerBase
@@ -32,8 +36,15 @@ namespace api.Controllers
             {
                 return BadRequest(ModelState);
             }
+
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            if (userId == null)
+            {
+                return Unauthorized();
+            }
             
-            var todos = await _todoRepo.GetAllAsync(query);
+            var todos = await _todoRepo.GetAllAsync(query, userId);
 
             var todoDto = todos.Select(t => t.ToTodoDto());
 
@@ -66,10 +77,16 @@ namespace api.Controllers
                 return BadRequest(ModelState);
             }
 
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            if (userId == null)
+            {
+                return Unauthorized();
+            }
+
             var todoModel = todoDto.ToTodoFromCreateDto();
 
-            //UserId only for testing
-            todoModel.UserId = "7daeebe8-8eee-4dd4-a9e5-f6293c8fa768";
+            todoModel.UserId = userId;
             todoModel.CreatedAt = DateTime.UtcNow;
 
             await _todoRepo.CreateAsync(todoModel);

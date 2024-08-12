@@ -1,3 +1,4 @@
+using System.IdentityModel.Tokens.Jwt;
 using api.Data;
 using api.Interfaces;
 using api.Models;
@@ -81,6 +82,7 @@ builder.Services.AddAuthentication(options => {
         ValidIssuer = builder.Configuration["JWT:Issuer"],
         ValidateAudience = true,
         ValidAudience = builder.Configuration["JWT:Audience"],
+        ValidateLifetime = true,
         ValidateIssuerSigningKey = true,
         IssuerSigningKey = new SymmetricSecurityKey(
             System.Text.Encoding.UTF8.GetBytes(builder.Configuration["JWT:SigningKey"] ?? throw new InvalidOperationException("JWT SigningKey is not configured"))
