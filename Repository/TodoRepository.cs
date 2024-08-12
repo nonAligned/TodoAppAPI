@@ -59,7 +59,7 @@ namespace api.Repository
             {
                 if(query.SortBy.Equals("DateCreated", StringComparison.OrdinalIgnoreCase))
                 {
-                    todos = query.IsDecsending ? todos.OrderByDescending(t => t.DateCreated) : todos.OrderBy(t => t.DateCreated);
+                    todos = query.IsDecsending ? todos.OrderByDescending(t => t.CreatedAt) : todos.OrderBy(t => t.CreatedAt);
                 }
             }
 
