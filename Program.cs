@@ -10,7 +10,9 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using DotNetEnv;
 
+DotNetEnv.Env.Load();
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -51,8 +53,20 @@ builder.Services.AddControllers().AddNewtonsoftJson(options => {
     options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
 });
 
+var connectionString = Environment.GetEnvironmentVariable("CONNECTION_STRING");
+
+if (string.IsNullOrEmpty(connectionString))
+{
+    throw new Exception("Connection string not found. Ensure the .env file is correctly configured and placed in the root directory.");
+}
+
+builder.Configuration.AddInMemoryCollection(new Dictionary<string, string>
+{
+    {"ConnectionStrings:DBCon", connectionString }
+});
+
 builder.Services.AddDbContext<ApplicationDBContext>(options => {
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DBCon"));
 });
 
 builder.Services.AddIdentity<User, IdentityRole>(options => {
@@ -67,6 +81,25 @@ builder.Services.AddIdentity<User, IdentityRole>(options => {
 
     options.User.RequireUniqueEmail = true;
 }).AddEntityFrameworkStores<ApplicationDBContext>();
+
+var jwtIssuer = Environment.GetEnvironmentVariable("JWT_ISSUER");
+var jwtAudience = Environment.GetEnvironmentVariable("JWT_AUDIENCE");
+var jwtKey = Environment.GetEnvironmentVariable("JWT_SIGNING_KEY");
+
+builder.Configuration.AddInMemoryCollection(new Dictionary<string, string>
+{
+    {"JWT:Issuer", jwtIssuer }
+});
+
+builder.Configuration.AddInMemoryCollection(new Dictionary<string, string>
+{
+    {"JWT:Audience", jwtAudience }
+});
+
+builder.Configuration.AddInMemoryCollection(new Dictionary<string, string>
+{
+    {"JWT:SigningKey", jwtKey }
+});
 
 builder.Services.AddAuthentication(options => {
     options.DefaultAuthenticateScheme =
