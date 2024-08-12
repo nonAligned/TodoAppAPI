@@ -1,8 +1,8 @@
-#Todo App API
+# Todo App API
 
 A simple API for a Todo App.
 
-##Features
+## Features
 
 Register and login user.
 
