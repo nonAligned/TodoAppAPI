@@ -93,5 +93,44 @@ namespace api.Controllers
                 }
             );
         }
+
+        [HttpGet("check-username")]
+        public async Task<IActionResult> CheckUsername([FromQuery] string username)
+        {
+            try
+            {
+                var user = await _userManager.FindByNameAsync(username);
+
+                if (user != null)
+                {
+                    return Ok(true);
+                }
+
+                return Ok(false);
+            }
+            catch (Exception e)
+            {
+                return StatusCode(500, e);
+            }
+        }
+
+        [HttpGet("check-email")]
+        public async Task<IActionResult> CheckEmail([FromQuery] string email)
+        {
+            try
+            {
+                var user = await _userManager.FindByEmailAsync(email);
+
+                if (user != null)
+                {
+                    return Ok(true);
+                }
+
+                return Ok(false);
+            } catch (Exception e)
+            {
+                return StatusCode(500, e);
+            }
+        }
     }
 }
