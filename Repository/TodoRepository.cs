@@ -51,16 +51,23 @@ namespace api.Repository
                 todos = todos.Where(t => t.Title.Contains(query.Title));
             }
 
-            if(query.IsComplete != null)
+            if(query.Filter != null)
             {
-                todos = todos.Where(t => t.IsComplete == query.IsComplete);
+                if (query.Filter.Equals("Completed", StringComparison.OrdinalIgnoreCase))
+                {
+                    todos = todos.Where(t => t.IsComplete == true);
+                }
+                else if (query.Filter.Equals("Pending", StringComparison.OrdinalIgnoreCase))
+                {
+                    todos = todos.Where(t => t.IsComplete == false);
+                }
             }
 
             if(!string.IsNullOrWhiteSpace(query.SortBy))
             {
-                if(query.SortBy.Equals("DateCreated", StringComparison.OrdinalIgnoreCase))
+                if(query.SortBy.Equals("CreatedAt", StringComparison.OrdinalIgnoreCase))
                 {
-                    todos = query.IsDecsending ? todos.OrderByDescending(t => t.CreatedAt) : todos.OrderBy(t => t.CreatedAt);
+                    todos = query.IsDescending ? todos.OrderByDescending(t => t.CreatedAt) : todos.OrderBy(t => t.CreatedAt);
                 }
             }
 
