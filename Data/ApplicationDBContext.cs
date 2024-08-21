@@ -5,7 +5,9 @@ using System.Threading.Tasks;
 using api.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
+using Polly;
 
 namespace api.Data
 {
@@ -13,8 +15,19 @@ namespace api.Data
     {
         public ApplicationDBContext(DbContextOptions dbContextOptions) : base(dbContextOptions)
         {
-            
+            var retryPolicy = Policy
+                .Handle<SqlException>()
+                .WaitAndRetry(
+                    retryCount: 5,
+                    sleepDurationProvider: retryAttempt => TimeSpan.FromSeconds(Math.Pow(2, retryAttempt))
+                );
+
+            retryPolicy.Execute(() =>
+            {
+                Database.EnsureCreated();
+            });
         }
+
 
         public DbSet<Todo> Todos { get; set; }
 
