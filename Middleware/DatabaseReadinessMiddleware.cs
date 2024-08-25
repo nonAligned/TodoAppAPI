@@ -17,7 +17,7 @@ namespace api.Middleware
         {
             try
             {
-                dbContext.Database.ExecuteSqlRaw("SELECT 1");
+                await dbContext.Database.ExecuteSqlRawAsync("SELECT 1");
             }
             catch (SqlException)
             {

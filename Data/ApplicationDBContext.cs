@@ -15,17 +15,7 @@ namespace api.Data
     {
         public ApplicationDBContext(DbContextOptions dbContextOptions) : base(dbContextOptions)
         {
-            var retryPolicy = Policy
-                .Handle<SqlException>()
-                .WaitAndRetry(
-                    retryCount: 5,
-                    sleepDurationProvider: retryAttempt => TimeSpan.FromSeconds(Math.Pow(2, retryAttempt))
-                );
-
-            retryPolicy.Execute(() =>
-            {
-                Database.EnsureCreated();
-            });
+            
         }
 
 
